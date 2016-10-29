@@ -1,6 +1,6 @@
 package checkers.ai;
 
-import checkers.Board;
+import checkers.game.Board;
 
 /**
  * Created by Ariel on 10/28/2016.

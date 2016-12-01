@@ -21,7 +21,7 @@ public class ComplexEvaluator implements Evaluator{
             value += POINT_WON;
         }else{
             value = WhiteBlackPiecesDifferencePoints(board);
-            //value /= board.blackPieces;
+            //value /= board.countBlack();
         }
         return value;
     }
@@ -34,16 +34,15 @@ public class ComplexEvaluator implements Evaluator{
             // Check only valid cols
             int c = (r % 2 == 0) ? 0 : 1;
             for (; c < board.getMatrix()[0].length; c += 2) {
-                //assert (!board.get(r,c).equals(CellEntry.inValid));
                 String entry = board.get(r,c);
                 if (entry == "w") {
-                    value += POINT_NORMAL;
-                } else if (entry == "W") {
-                    value += POINT_KING;
-                } else if (entry == "b") {
                     value -= POINT_NORMAL;
-                } else if (entry == "B") {
+                } else if (entry == "W") {
                     value -= POINT_KING;
+                } else if (entry == "b") {
+                    value += POINT_NORMAL;
+                } else if (entry == "B") {
+                    value += POINT_KING;
                 }
             }
         }

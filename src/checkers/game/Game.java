@@ -37,9 +37,9 @@ public class Game {
     }
 
     public Move makeNextBlackMove() {
-        if(board.isDraw("b")){
-            System.out.println("Draw");
-        }
+//        if(board.isDraw("b")){
+//            System.out.println("Draw");
+//        }
         Move move = this.brain.think(board, "b");
         board.makeMove(move);
         return move;

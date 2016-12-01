@@ -17,13 +17,13 @@ public class SimpleEvaluator implements Evaluator{
         if(board.isWinner(player)){
             value += POINT_WON;
         }else{
-            value = WhiteBlackPiecesDifferencePoints(board);
+            value = whiteBlackPiecesDifferencePoints(board);
             //value /= board.blackPieces;
         }
         return value;
     }
 
-    private int WhiteBlackPiecesDifferencePoints(Board board) {
+    private int whiteBlackPiecesDifferencePoints(Board board) {
 
         int value = 0;
         // Scan across the board
@@ -31,8 +31,7 @@ public class SimpleEvaluator implements Evaluator{
             // Check only valid cols
             int c = (r % 2 == 0) ? 0 : 1;
             for (; c < board.getMatrix()[0].length; c += 2) {
-                //assert (!board.get(r,c).equals(CellEntry.inValid));
-                String entry = board.get(r,c);
+                String entry = board.get(r, c);
                 if (entry == "w") {
                     value += POINT_NORMAL;
                 } else if (entry == "W") {

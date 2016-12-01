@@ -2,7 +2,6 @@ package checkers.game;
 
 import checkers.ai.Evaluator;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,7 +79,7 @@ public class Board {
         String currentValue = matrix[row][col];
 
         //if (currentValue == "") {
-            matrix[row][col] = value;
+        matrix[row][col] = value;
         //}
     }
 
@@ -167,12 +166,33 @@ public class Board {
         return moves;
     }
 
+    /**
+     * Find all possible moves for a player
+     *
+     * @param piece
+     * @return
+     */
+    public LinkedList<Move> allPosibleMoves(String piece) {
+        LinkedList<Move> moves = new LinkedList<Move>();
+        moves = allPosibleForcedMoves(piece);
+        if (moves.isEmpty()) {
+            for (int i = 0; i < matrix.length; i++) {
+                int j = (i % 2 == 0) ? 0 : 1;
+                for (; j < matrix[i].length; j += 2) {
+                    if (piece.toLowerCase().equals(get(i, j)) || piece.toUpperCase().equals(get(i, j))) {
+                        moves.addAll(posibleMoves(i, j));
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+
     public List<Move> forcedMoves(Integer row, Integer col) {
         List<Move> moves = new LinkedList<Move>();
-
         String piece = get(row, col);
-
-        if (piece == "b" || piece == "B" || piece == "W") {
+        //capturing down
+        if (piece == "b" || piece == "B") {
             //capture left down
             if (row < matrix.length - 2 && col >= 2 && (get(row + 1, col - 1) == "w" || get(row + 1, col - 1) == "W") && get(row + 2, col - 2) == "") {
                 moves.add(new Move(row, col, row + 2, col - 2));
@@ -182,13 +202,34 @@ public class Board {
                 moves.add(new Move(row, col, row + 2, col + 2));
             }
         }
-        if (piece == "w" || piece == "W" || piece == "B") {
+        if (piece == "W") {
+            //capture left down
+            if (row < matrix.length - 2 && col >= 2 && (get(row + 1, col - 1) == "b" || get(row + 1, col - 1) == "B") && get(row + 2, col - 2) == "") {
+                moves.add(new Move(row, col, row + 2, col - 2));
+            }
+            //capture right down
+            if (row < matrix.length - 2 && col < matrix[0].length - 2 && (get(row + 1, col + 1) == "b" || get(row + 1, col + 1) == "B") && get(row + 2, col + 2) == "") {
+                moves.add(new Move(row, col, row + 2, col + 2));
+            }
+        }
+        //capturing up
+        if (piece == "w" || piece == "W") {
             //capture left up
             if (row >= 2 && col >= 2 && (get(row - 1, col - 1) == "b" || get(row - 1, col - 1) == "B") && get(row - 2, col - 2) == "") {
                 moves.add(new Move(row, col, row - 2, col - 2));
             }
             //capture right up
             if (row >= 2 && col < matrix[0].length - 2 && (get(row - 1, col + 1) == "b" || get(row - 1, col + 1) == "B") && get(row - 2, col + 2) == "") {
+                moves.add(new Move(row, col, row - 2, col + 2));
+            }
+        }
+        if (piece == "B") {
+            //capture left up
+            if (row >= 2 && col >= 2 && (get(row - 1, col - 1) == "w" || get(row - 1, col - 1) == "W") && get(row - 2, col - 2) == "") {
+                moves.add(new Move(row, col, row - 2, col - 2));
+            }
+            //capture right up
+            if (row >= 2 && col < matrix[0].length - 2 && (get(row - 1, col + 1) == "w" || get(row - 1, col + 1) == "W") && get(row - 2, col + 2) == "") {
                 moves.add(new Move(row, col, row - 2, col + 2));
             }
         }
@@ -201,14 +242,14 @@ public class Board {
      * @param piece
      * @return
      */
-    public LinkedList<Move> allPosibleMoves(String piece) {
+    public LinkedList<Move> allPosibleForcedMoves(String piece) {
         LinkedList<Move> moves = new LinkedList<Move>();
 
         for (int i = 0; i < matrix.length; i++) {
             int j = (i % 2 == 0) ? 0 : 1;
             for (; j < matrix[i].length; j += 2) {
                 if (matrix[i][j] == piece.toLowerCase() || matrix[i][j] == piece.toUpperCase()) {
-                    moves.addAll(posibleMoves(i, j));
+                    moves.addAll(forcedMoves(i, j));
                 }
             }
         }

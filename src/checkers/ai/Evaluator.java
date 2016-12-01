@@ -7,5 +7,5 @@ import checkers.game.Board;
  */
 public interface Evaluator {
 
-    public Integer evaluate(Board board);
+    public Integer evaluate(Board board, String player);
 }

@@ -15,6 +15,11 @@ public class Game {
 
     }
 
+    public Game(Board board, Brain brain) {
+        this.board = board;
+        this.brain = brain;
+    }
+
     public Board getBoard() {
         return board;
     }
@@ -31,6 +36,16 @@ public class Game {
         this.brain = brain;
     }
 
+    public Move makeNextBlackMove() {
+        if(board.isDraw("b")){
+            System.out.println("Draw");
+        }
+        Move move = this.brain.think(board, "b");
+        board.makeMove(move);
+        return move;
+    }
 
-
+    public void makeMove(Move move) {
+        board.makeMove(move);
+    }
 }

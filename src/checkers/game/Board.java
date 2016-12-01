@@ -14,14 +14,14 @@ public class Board {
     private Evaluator evaluator;
 
     private String[][] matrix = {
-            {null, "b", null, "b", null, "b", null, "b"},
-            {"b", null, "b", null, "b", null, "b", null},
-            {null, "b", null, "b", null, "b", null, "b"},
-            {"", null, "", null, "", null, "", null},
-            {null, "", null, "", null, "", null, ""},
-            {"w", null, "w", null, "w", null, "w", null},
-            {null, "w", null, "w", null, "w", null, "w"},
-            {"w", null, "w", null, "w", null, "w", null}
+            {"b", "-", "b", "-", "b", "-", "b", "-"},
+            {"-", "b", "-", "b", "-", "b", "-", "b"},
+            {"b", "-", "b", "-", "b", "-", "b", "-"},
+            {"-", "", "-", "", "-", "", "-", ""},
+            {"", "-", "", "-", "", "-", "", "-"},
+            {"-", "w", "-", "w", "-", "w", "-", "w"},
+            {"w", "-", "w", "-", "w", "-", "w", "-"},
+            {"-", "w", "-", "w", "-", "w", "-", "w"},
     };
 
     public Board() {
@@ -30,10 +30,23 @@ public class Board {
 
     public Board(Board board) {
         matrix = board.getMatrix();
+        String[][] newMatrix = new String[matrix.length][matrix[0].length];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                newMatrix[i][j] = matrix[i][j];
+            }
+        }
+        matrix = newMatrix;
+        evaluator = board.getEvaluator();
     }
 
     public Board(String[][] matrix) {
         this.matrix = matrix;
+    }
+
+    public Board(String[][] matrix, Evaluator evaluator) {
+        this.matrix = matrix;
+        this.evaluator = evaluator;
     }
 
     public Board clone() {
@@ -61,11 +74,14 @@ public class Board {
     }
 
     public void set(Integer row, Integer col, String value) {
+//        if(row < 0 || col < 0 || row > 7  || col > 7 || matrix.length != 8|| matrix[row].length != 8){
+//            int t = 0;
+//        }
         String currentValue = matrix[row][col];
-        //the position is empty so we can set de position with the new value
-        if (currentValue == "") {
+
+        //if (currentValue == "") {
             matrix[row][col] = value;
-        }
+        //}
     }
 
     public Integer countPiece(String piece) {
@@ -101,18 +117,16 @@ public class Board {
         return (countBlack() == 0 || this.countWhite() == 0) ? true : false;
     }
 
+    public boolean isDraw(String piece) {
+        return allPosibleMoves(piece).isEmpty();
+    }
 
-//    public boolean isDraw(Player turn) {
-//
-//        Vector<Vector<Move>> possibleMoveSeq = Robot.expandMoves(this.duplicate(), turn);
-//
-//        if (possibleMoveSeq.isEmpty()) {
-//            return true;
-//
-//        } else {
-//            return false;
-//        }
-//    }
+    public boolean isWinner(String player) {
+        if (player.toLowerCase() == "w") {
+            return isWhiteWinner();
+        }
+        return isBlackWinner();
+    }
 
     public boolean isWhiteWinner() {
         return countBlack() == 0;
@@ -146,7 +160,7 @@ public class Board {
             }
             //move right up
             if (row >= 1 && col < matrix[0].length - 1 && get(row - 1, col + 1) == "") {
-                moves.add(new Move(row, col, row - 1, col - 1));
+                moves.add(new Move(row, col, row - 1, col + 1));
             }
 
         }
@@ -187,8 +201,8 @@ public class Board {
      * @param piece
      * @return
      */
-    public List<Move> allPosibleMoves(String piece) {
-        List<Move> moves = new LinkedList<Move>();
+    public LinkedList<Move> allPosibleMoves(String piece) {
+        LinkedList<Move> moves = new LinkedList<Move>();
 
         for (int i = 0; i < matrix.length; i++) {
             int j = (i % 2 == 0) ? 0 : 1;
@@ -232,15 +246,30 @@ public class Board {
         }
     }
 
-    public List<Board> expand(List<Move> moves) {
-        List<Board> boards = new LinkedList<Board>();
+    public LinkedList<Board> expand(LinkedList<Move> moves) {
+        LinkedList<Board> boards = new LinkedList<Board>();
 
         for (Move move : moves) {
             Board newBoard = this.clone();
             newBoard.makeMove(move);
+            boards.add(newBoard);
         }
         return boards;
     }
 
+    public boolean canExploreFurther(Board board, String player, int depth) {
+        boolean res = true;
+        if (board.isComplete() || board.isDraw(player)) {
+            res = false;
+        }
+        if (depth == 6) {
+            res = false;
+        }
+        return res;
+    }
+
+    public int evaluate(String player) {
+        return getEvaluator().evaluate(this, player.toLowerCase());
+    }
 
 }

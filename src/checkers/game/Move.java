@@ -10,6 +10,11 @@ public class Move {
     private Integer toRow;
     private Integer toCol;
 
+
+    public Move() {
+
+    }
+
     public Move(Integer fromRow, Integer fromCol, Integer toRow, Integer toCol) {
         this.fromRow = fromRow;
         this.fromCol = fromCol;
